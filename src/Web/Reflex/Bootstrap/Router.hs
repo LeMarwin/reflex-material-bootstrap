@@ -1,6 +1,7 @@
 module Web.Reflex.Bootstrap.Router(
     Route(..)
   , route
+  , switchRoute
   ) where
 
 import Reflex
