@@ -36,23 +36,22 @@ library
     Web.Reflex.Bootstrap.Wizzard
   default-language:    Haskell2010
   build-depends:
-      base                    >= 4.7   && < 5
-    , aeson                   >= 0.11  && < 1.3
-    , bytestring              >= 0.10  && < 0.11
-    , containers              >= 0.5.7 && < 0.6
-    , data-default            >= 0.7   && < 0.8
-    , dependent-map           >= 0.2   && < 0.3
-    , either                  >= 4.4   && < 4.5
-    , extra                   >= 1.5   && < 1.6
-    , ghcjs-base              >= 0.2   && < 0.3
-    , ghcjs-dom               >= 0.2   && < 0.10
-    , lens                    >= 4.14  && < 4.16
-    , reflex                  >= 0.5   && < 0.6
-    , reflex-dom              >= 0.4   && < 0.5
-    , safe                    >= 0.3   && < 0.4
-    , text                    >= 1.2   && < 1.3
-    , time                    >= 1.6   && < 1.7
-
+      base
+    , aeson
+    , bytestring
+    , containers
+    , data-default
+    , dependent-map
+    , either
+    , extra
+    , ghcjs-base
+    , ghcjs-dom
+    , lens
+    , reflex
+    , reflex-dom
+    , safe
+    , text
+    , time
   default-extensions:
     BangPatterns
     DataKinds
