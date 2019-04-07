@@ -43,10 +43,14 @@ library
     , data-default
     , dependent-map
     , either
+    , exception-transformers
     , extra
     , ghcjs-base
     , ghcjs-dom
     , lens
+    , monad-control
+    , mtl
+    , ref-tf
     , reflex
     , reflex-dom
     , safe
