@@ -27,3 +27,7 @@ route w = do
       let rd'   :: Dynamic t (Event t (m (a, Route t m a))) = unRoute . snd <$> rd
           re    :: Event t (m (a, Route t m a)) = switchPromptlyDyn rd'
   pure $ fst <$> rd
+
+-- | Allows to switch over dynamic route to a single route
+switchRoute :: forall t m a . MonadWidget t m => Dynamic t (Route t m a) -> Route t m a
+switchRoute = Route . switch . current . fmap unRoute

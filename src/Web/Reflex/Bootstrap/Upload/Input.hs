@@ -1,14 +1,3 @@
-{-|
-Module      : Web.Reflex.Bootstrap.Upload.Input
-Description : Reading files with HTML5 File API
-Copyright   : (c) Anton Gushcha, 2016
-License     : BSD3
-Maintainer  : ncrashed@gmail.com
-Stability   : experimental
-Portability : Portable
-
-TODO: pull request this to reflex-dom-contrib
--}
 module Web.Reflex.Bootstrap.Upload.Input(
     UploadFileConfig(..)
   , defaultUploadFileConfig
@@ -76,18 +65,18 @@ newtype OnLoadEvent = OnLoadEvent JSVal
 
 foreign import javascript unsafe "$r = new FileReader();"
   js_newFileReader :: IO FileReader
-foreign import javascript unsafe "$1.onload = $2;"
+foreign import javascript unsafe "$1['onload'] = $2;"
   js_readerOnload :: FileReader -> Callback (JSVal -> IO ()) -> IO ()
-foreign import javascript unsafe "$r = $1.target.result;"
+foreign import javascript unsafe "$r = $1['target']['result'];"
   js_onLoadEventArrayBuffer :: OnLoadEvent -> IO ArrayBuffer
-foreign import javascript unsafe "$1.readAsArrayBuffer($2);"
+foreign import javascript unsafe "$1['readAsArrayBuffer']($2);"
   js_readAsArrayBuffer :: FileReader -> File -> IO ()
 
-foreign import javascript unsafe "$r = $1.type;"
+foreign import javascript unsafe "$r = $1['type'];"
   js_fileType :: File -> IO JSString
-foreign import javascript unsafe "$r = $1.size;"
+foreign import javascript unsafe "$r = $1['size'];"
   js_fileSize :: File -> IO Word
-foreign import javascript unsafe "$r = $1.slice($2, $3);"
+foreign import javascript unsafe "$r = $1['slice']($2, $3);"
   js_fileSlice :: File -> Word -> Word -> IO File
 
 -- | Input for JSON file that is deserialised to specified type

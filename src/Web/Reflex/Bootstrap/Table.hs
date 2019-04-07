@@ -1,13 +1,3 @@
-{-|
-Module      : Web.Reflex.Bootstrap.Table
-Description : Table helpers for bootstrap
-Copyright   : (c) Anton Gushcha, 2017
-License     : BSD3
-Maintainer  : ncrashed@gmail.com
-Stability   : experimental
-Portability : Portable
-
--}
 module Web.Reflex.Bootstrap.Table(
     tableHover
   , thead

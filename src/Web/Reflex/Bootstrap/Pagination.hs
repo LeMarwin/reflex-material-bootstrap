@@ -1,17 +1,9 @@
-{-|
-Module      : Web.Reflex.Pagination
-Description : Helpers to make pagination widgets
-Copyright   : (c) Anton Gushcha, 2016
-License     : BSD3
-Maintainer  : ncrashed@gmail.com
-Stability   : experimental
-Portability : Portable
--}
 module Web.Reflex.Bootstrap.Pagination(
     renderList
   , renderListReload
   , renderPage
   , renderPageReload
+  , renderPageReloadWithPageE
   , renderPager
   , PagedList(..)
   , Page
@@ -89,6 +81,36 @@ renderPageReload maxPages defb render getPage reloadEvent = do
     es <- render curw pl
     return (pageE, es)
 
+
+-- | Widget that renders remote data as pages with pagination controls
+renderPageReloadWithPageE :: forall t m a b c . MonadWidget t m
+  => Maybe Word -- ^ How much pages to display by one side of current page, 'Nothing' means all
+  -> b -- ^ Default value for page (while not loaded)
+  -> (Page -> PagedList a -> m b) -- ^ Renderer of page
+  -> (Event t Page -> m (Event t (PagedList a))) -- ^ Getter of pages
+  -> Event t c -- ^ Reload event
+  -> m (Event t Page, Dynamic t b)
+renderPageReloadWithPageE maxPages defb render getPage reloadEvent = do
+  initE <- fmap (const 0) <$> getPostBuild
+  rec res@(pageE, es) <- pager $ leftmost [initE, pageE, const 0 <$> reloadEvent]
+  return res
+  where
+  pager :: Event t Page -> m (Event t Page, Dynamic t b)
+  pager curw = do
+    curwD <- holdDyn 0 curw
+    edata <- getPage curw
+    let edataWithPage = attachPromptlyDynWith (,) curwD edata
+    dynRes <- widgetHold (pure (never, defb)) $ uncurry renderContent <$> edataWithPage
+    let (pageED, esD) = splitDynPure dynRes
+    return (switchPromptlyDyn pageED, esD)
+
+  renderContent :: Page -> PagedList a -> m (Event t Page, b)
+  renderContent curw pl@(PagedList _ w) = do
+    pageE <- renderPager maxPages curw w
+    es <- render curw pl
+    return (pageE, es)
+
+
 -- | Display pager widget that reacts to clicking on it
 renderPager :: forall t m . MonadWidget t m
   => Maybe Word -- ^ How much pages to display by one side of current page, 'Nothing' means all
@@ -119,44 +141,44 @@ renderPager maxSide curw pages' = do
   beginButton :: m (Event t Page)
   beginButton
     | curw == 0 = do
-      elClass "li" "disabled" $ el "a" $ text "««"
+      elClass "li" "disabled page-item" $ elClass "a" "page-link" $ text "««"
       return never
-    | otherwise = el "li" $ do
-      (e, _) <- elAttr' "a" [("href", "#")] $ text "««"
+    | otherwise = elClass "li" "page-item" $ do
+      (e, _) <- elAttr' "a" [("href", "#"),("onclick","return false;"), ("class", "page-link")] $ text "««"
       return $ const 0 <$> domEvent Click e
 
   prevButton :: m (Event t Page)
   prevButton
     | curw == 0 = do
-      elClass "li" "disabled" $ el "a" $ text "«"
+      elClass "li" "disabled page-item" $ elClass "a" "page-link" $ text "«"
       return never
-    | otherwise = el "li" $ do
-      (e, _) <- elAttr' "a" [("href", "#")] $ text "«"
+    | otherwise = elClass "li" "page-item" $ do
+      (e, _) <- elAttr' "a" [("href", "#"),("onclick","return false;"), ("class", "page-link")] $ text "«"
       return $ const (curw-1) <$> domEvent Click e
 
   nextButton :: m (Event t Page)
   nextButton
     | curw == pages-1 = do
-      elClass "li" "disabled" $ el "a" $ text "»"
+      elClass "li" "disabled page-item" $ elClass "a" "page-link" $ text "»"
       return never
-    | otherwise = el "li" $ do
-      (e, _) <- elAttr' "a" [("href", "#")] $ text "»"
+    | otherwise = elClass "li" "page-item" $ do
+      (e, _) <- elAttr' "a" [("href", "#"),("onclick","return false;"), ("class", "page-link")] $ text "»"
       return $ const (curw+1) <$> domEvent Click e
 
   endButton :: m (Event t Page)
   endButton
     | curw == pages-1 = do
-      elClass "li" "disabled" $ el "a" $ text "»»"
+      elClass "li" "disabled page-item" $  elClass "a" "page-link" $ text "»»"
       return never
-    | otherwise = el "li" $ do
-      (e, _) <- elAttr' "a" [("href", "#")] $ text "»»"
+    | otherwise = elClass "li" "page-item" $ do
+      (e, _) <- elAttr' "a" [("href", "#"),("onclick","return false;"), ("class", "page-link")] $ text "»»"
       return $ const (pages-1) <$> domEvent Click e
 
   pageButton :: Page -> m (Event t Page)
   pageButton i
     | i == curw = do
-      elClass "li" "active" $ el "a" $ text (showt $ i+1)
+      elClass "li" "active page-item" $ elClass "a" "page-link" $ text (showt $ i+1)
       return never
-    | otherwise = el "li" $ do
-      (e, _) <- elAttr' "a" [("href", "#")] $ text (showt $ i+1)
+    | otherwise = elClass "li" "page-item" $ do
+      (e, _) <- elAttr' "a" [("href", "#"),("onclick","return false;"), ("class", "page-link")] $ text (showt $ i+1)
       return $ const i <$> domEvent Click e

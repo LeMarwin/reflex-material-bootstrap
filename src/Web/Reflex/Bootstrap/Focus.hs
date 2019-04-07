@@ -7,8 +7,8 @@ import Control.Monad.IO.Class
 import qualified GHCJS.DOM.Types as DOM
 import Reflex.Dom
 
-foreign import javascript unsafe "$1.focus()" js_focus :: DOM.Element -> IO ()
-foreign import javascript unsafe "$1.scrollIntoView()" js_scrollIntoView :: DOM.Element -> IO ()
+foreign import javascript unsafe "$1['focus']()" js_focus :: DOM.Element -> IO ()
+foreign import javascript unsafe "$1['scrollIntoView']()" js_scrollIntoView :: DOM.Element -> IO ()
 
 -- | Focus element given in event payload
 focusElementRaw :: forall t m . MonadWidget t m => Event t DOM.Element -> m ()
