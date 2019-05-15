@@ -4,11 +4,15 @@ module Web.Reflex.Bootstrap(
 
 import Web.Reflex.Bootstrap.Basket as Reexport
 import Web.Reflex.Bootstrap.Context as Reexport
+
+#ifndef ANDROID_IMPL
 import Web.Reflex.Bootstrap.Focus as Reexport
+import Web.Reflex.Bootstrap.Modal as Reexport
+#endif
+
 import Web.Reflex.Bootstrap.Form as Reexport
 import Web.Reflex.Bootstrap.Markup as Reexport
 import Web.Reflex.Bootstrap.Menu as Reexport
-import Web.Reflex.Bootstrap.Modal as Reexport
 import Web.Reflex.Bootstrap.Pagination as Reexport
 import Web.Reflex.Bootstrap.Progress as Reexport
 import Web.Reflex.Bootstrap.Router as Reexport

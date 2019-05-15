@@ -1,6 +1,5 @@
 module Web.Reflex.Bootstrap.Utils(
     showt
-  , whenJust
   , periodical
   , whenPrev
   , globalIdRef
@@ -25,7 +24,6 @@ import Data.Time
 import Reflex
 import Reflex.Dom
 import System.IO.Unsafe
-import Control.Monad.Extra
 
 import qualified Data.Text as T
 

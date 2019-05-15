@@ -27,11 +27,15 @@ tooltipPlace p = case p of
   TooltipBottom -> "bottom"
   TooltipTop -> "top"
 
+#ifdef ANDROID_IMPL
+initTooltip :: MonadWidget t m => Element EventResult (DomBuilderSpace m) t -> m ()
+initTooltip Element{..} = pure ()
+#else
 foreign import javascript unsafe "tippy($1)" js_initTooltip :: DOM.Element -> IO ()
-
 -- | Initialize tooltip for element (raw element from 'el'' and 'elClass'')
 initTooltip :: MonadWidget t m => Element EventResult (DomBuilderSpace m) t -> m ()
 initTooltip Element{..} = liftIO $ js_initTooltip _element_raw
+#endif
 
 -- | Create clickable link with subcontent and tooltip
 hrefTooltip :: MonadWidget t m => TooltipPlace -> Dynamic t Text -> m a -> m (Event t ())

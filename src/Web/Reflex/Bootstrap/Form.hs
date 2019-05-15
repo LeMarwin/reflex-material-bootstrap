@@ -32,12 +32,14 @@ module Web.Reflex.Bootstrap.Form(
   , formGroupStatic
   , formGroupText
   , formGroupInt
-  , formGroupJson
   , formGroupLabel
   , formGroupSelect
   , textInputDyn
   , editInputDyn
   , submitButton
+#ifndef ANDROID_IMPL
+  , formGroupJson
+#endif
   ) where
 
 import Control.Monad.Exception
@@ -62,8 +64,13 @@ import Reflex.Host.Class
 import Text.Read (readMaybe, readEither)
 
 import Web.Reflex.Bootstrap.Markup
-import Web.Reflex.Bootstrap.Upload.Input
 import Web.Reflex.Bootstrap.Utils
+
+#ifdef ANDROID_IMPL
+import Language.Javascript.JSaddle.Types
+#else
+import Web.Reflex.Bootstrap.Upload.Input
+#endif
 
 -- | Bootstrap has two types of forms
 data FormType = FormHorizontal | FormInline | FormNone
@@ -151,6 +158,12 @@ instance PostBuild t m => PostBuild t (FormT t m) where
 instance (DomBuilder t m, MonadHold t m, MonadFix m) => DomBuilder t (FormT t m) where
   type DomBuilderSpace (FormT t m) = DomBuilderSpace m
 
+#ifdef ANDROID_IMPL
+instance MonadJSM m => MonadJSM (FormT t m) where
+  liftJSM' = lift . liftJSM'
+  {-# INLINE liftJSM' #-}
+#endif
+
 -- | Render input elements without form
 noForm :: MonadWidget t m => FormT t m a -> m a
 noForm ma = runFormT FormNone ma
@@ -236,6 +249,7 @@ formGroupLabel labelTextD w = formGroup $ do
     mkLabel = elAttr "label"
     elemId = ("form-group-" <>) . showt
 
+#ifndef ANDROID_IMPL
 -- | Helper to create bootstrap text input with label
 formGroupJson :: forall t m a . (FromJSON a, MonadForm t m)
   => Dynamic t Text -- ^ Label
@@ -260,6 +274,7 @@ formGroupJson labelTextD cfg = formGroupLabel labelTextD $ \fid -> do
           _ -> Nothing
     fileNameD <- holdDyn "Browse..." fileNameE
   return mfileE
+#endif
 
 -- | Helper to create bootstrap text input with label
 formGroupText :: MonadForm t m => Dynamic t Text -> TextInputConfig t -> m (TextInput t)
